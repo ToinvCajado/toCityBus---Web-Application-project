@@ -1,0 +1,140 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : 25 de abr. de 2026, 17:36:07
+    Author     : TonhoPC
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0c0c0c; /* Fundo escuro do protótipo */
+    color: white;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    height: 100%;
+}
+
+/* Sidebar Estilo */
+.sidebar {
+    width: 250px;
+    background-color: #333333;
+    padding: 20px;
+    border-right: 1px solid #444;
+}
+
+.sidebar h2 {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 40px;
+}
+
+.menu-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li a {
+    color: #aaa;
+    text-decoration: none;
+    font-style: italic;
+}
+
+/* Área Central */
+.login-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.icon-box {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 1.5rem;
+}
+
+.login-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.login-header p {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+/* Card de Login */
+.login-card {
+    background-color: #222222;
+    padding: 30px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #444;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ddd;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    background-color: #333;
+    border: 1px solid #555;
+    border-radius: 8px;
+    color: white;
+}
+
+.btn-entrar {
+    width: 100%;
+    padding: 12px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-entrar:hover {
+    background-color: #004494;
+}

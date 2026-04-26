@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:pt="jakarta.faces.passthrough">
+    <h:head>
+        <title>Venda de Passagem - BusTicket</title>
+    </h:head>
+    <h:body>
+        <h1>Finalizar Venda</h1>
+        
+        <h:form id="formVenda">
+            <fieldset>
+                <legend>Dados da Viagem</legend>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Origem / Destino:" />
+                    <h:outputText value="#{vendaBean.viagem.origem.nome} para #{vendaBean.viagem.destino.nome}" />
+                    
+                    <h:outputLabel value="Data e Hora:" />
+                    <h:outputText value="#{vendaBean.viagem.horarioSaida}" />
+                    
+                    <h:outputLabel value="Ônibus:" />
+                    <h:outputText value="#{vendaBean.viagem.veiculo.modelo}" />
+                </h:panelGrid>
+            </fieldset>
+
+            <br />
+
+            <fieldset>
+                <legend>Dados do Passageiro</legend>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="Nome Completo:" />
+                    <h:inputText value="#{vendaBean.passagem.nomePassageiro}" pt:placeholder="Nome no RG" />
+                    
+                    <h:outputLabel value="CPF:" />
+                    <h:inputText value="#{vendaBean.passagem.cpfPassageiro}" pt:placeholder="000.000.000-00" />
+                    
+                    <h:outputLabel value="Nº da Poltrona:" />
+                    <h:inputText value="#{vendaBean.passagem.numeroAssento}" pt:type="number" />
+                </h:panelGrid>
+            </fieldset>
+
+            <br />
+
+            <h3>Total a Pagar: 
+                <h:outputText value="#{vendaBean.viagem.valor}">
+                    <f:convertNumber type="currency" currencySymbol="R$" />
+                </h:outputText>
+            </h3>
+
+            <h:commandButton value="Confirmar Compra" action="#{vendaBean.finalizarVenda}" />
+            <h:button value="Cancelar" outcome="consultaRoteiro" />
+        </h:form>
+    </h:body>
+</html>
