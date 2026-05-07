@@ -4,10 +4,31 @@
  */
 package services;
 
-/**
- *
- * @author TonhoPC
- */
+import model.Veiculo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repository.VeiculoRepository;
+import java.util.List;
+
+@Service
 public class VeiculoService {
-    
+
+    private final VeiculoRepository repository;
+
+    @Autowired
+    public VeiculoService(VeiculoRepository repository) {
+        this.repository = repository;
+    }
+
+    public Veiculo salvar(Veiculo veiculo) {
+        return repository.save(veiculo);
+    }
+
+    public List<Veiculo> listarTodos() {
+        return repository.findAll();
+    }
+
+    public void excluir(Long id) {
+        repository.deleteById(id);
+    }
 }
