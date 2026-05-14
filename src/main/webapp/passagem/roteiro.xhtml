@@ -1,15 +1,103 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Consulta por Roteiro - ToCityBus</ui:define>
+
+    <ui:define name="conteudo">
+        <div class="page-header">
+            <h1 class="page-title">Consulta por Roteiro</h1>
+        </div>
+        <p:messages showDetail="true"/>
+
+        <h:form>
+            <div class="card" style="margin-bottom:18px">
+                <div class="card-body">
+                    <div class="form-linha">
+                        <div class="form-group">
+                            <label class="form-label">Origem *</label>
+                            <p:selectOneMenu
+                                value="#{passagemBean.idOrigemRoteiro}"
+                                styleClass="form-control"
+                                required="true">
+                                <f:selectItem itemLabel="-- Selecione --"
+                                             itemValue="#{null}"/>
+                                <f:selectItems
+                                    value="#{passagemBean.cidades}"
+                                    var="c"
+                                    itemValue="#{c.idCidade}"
+                                    itemLabel="#{c.nomeCidade} - #{c.uf}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Destino *</label>
+                            <p:selectOneMenu
+                                value="#{passagemBean.idDestinoRoteiro}"
+                                styleClass="form-control"
+                                required="true">
+                                <f:selectItem itemLabel="-- Selecione --"
+                                             itemValue="#{null}"/>
+                                <f:selectItems
+                                    value="#{passagemBean.cidades}"
+                                    var="c"
+                                    itemValue="#{c.idCidade}"
+                                    itemLabel="#{c.nomeCidade} - #{c.uf}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data (opcional)</label>
+                            <p:datePicker
+                                value="#{passagemBean.dataRoteiro}"
+                                styleClass="form-control"
+                                pattern="dd/MM/yyyy"/>
+                        </div>
+                    </div>
+                    <div class="form-acoes"
+                         style="border:none;padding:0;margin-top:8px">
+                        <p:commandButton value="Consultar"
+                            styleClass="btn btn-primary"
+                            action="#{passagemBean.consultarRoteiro}"
+                            update="@form"/>
+                    </div>
+                </div>
+            </div>
+
+            <p:dataTable
+                value="#{passagemBean.passagensRoteiro}"
+                var="p"
+                rendered="#{passagemBean.passagensRoteiro != null}"
+                emptyMessage="Nenhuma passagem encontrada.">
+                <p:column headerText="#">
+                    <h:outputText value="#{p.idPassagem}"/>
+                </p:column>
+                <p:column headerText="Veículo">
+                    <h:outputText value="#{p.veiculo.placa}"/>
+                </p:column>
+                <p:column headerText="Poltrona">
+                    <h:outputText value="#{p.poltrona}"/>
+                </p:column>
+                <p:column headerText="Data">
+                    <h:outputText value="#{p.dataSaida}">
+                        <f:convertDateTime pattern="dd/MM/yyyy"
+                                          type="localDate"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Hora">
+                    <h:outputText value="#{p.horaSaida}"/>
+                </p:column>
+                <p:column headerText="Valor">
+                    <h:outputText value="#{p.valorPassagem}">
+                        <f:convertNumber type="currency"
+                                        currencySymbol="R$ "
+                                        minFractionDigits="2"/>
+                    </h:outputText>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>
 </html>

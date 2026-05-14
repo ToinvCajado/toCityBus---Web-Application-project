@@ -1,15 +1,125 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Veículos - ToCityBus</ui:define>
+
+    <ui:define name="conteudo">
+        <p:messages showDetail="false"/>
+        <h:form>
+            <div class="page-header">
+                <h1 class="page-title">Veículos</h1>
+                <p:commandButton value="+ Novo Veículo"
+                    styleClass="btn btn-primary"
+                    action="#{veiculoBean.novoVeiculo}"
+                    update=":formVeiculo"
+                    oncomplete="PF('dlgVeiculo').show()"/>
+            </div>
+
+            <div class="card">
+                <p:dataTable value="#{veiculoBean.veiculos}"
+                             var="v"
+                             emptyMessage="Nenhum veículo cadastrado.">
+                    <p:column headerText="Número">
+                        <h:outputText value="#{v.numero}"/>
+                    </p:column>
+                    <p:column headerText="Placa">
+                        <h:outputText value="#{v.placa}"/>
+                    </p:column>
+                    <p:column headerText="Modelo">
+                        <h:outputText value="#{v.modelo}"/>
+                    </p:column>
+                    <p:column headerText="Motorista">
+                        <h:outputText value="#{v.motorista}"/>
+                    </p:column>
+                    <p:column headerText="Poltronas">
+                        <h:outputText value="#{v.qtdPoltronas}"/>
+                    </p:column>
+                    <p:column headerText="Ações">
+                        <p:commandButton value="Editar"
+                            styleClass="btn btn-cinza btn-sm"
+                            action="#{veiculoBean.prepararEdicao(v)}"
+                            update=":formVeiculo"
+                            oncomplete="PF('dlgVeiculo').show()"/>
+                        <p:commandButton value="Excluir"
+                            styleClass="btn btn-perigo btn-sm"
+                            action="#{veiculoBean.excluir(v)}"
+                            update="@form"
+                            onclick="return confirm('Excluir este veículo?')"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <p:dialog header="Veículo" widgetVar="dlgVeiculo"
+                  modal="true" width="600">
+            <h:form id="formVeiculo">
+                <p:messages showDetail="true"/>
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label class="form-label">Número *</label>
+                        <p:inputText
+                            value="#{veiculoBean.veiculoSelecionado.numero}"
+                            styleClass="form-control"
+                            placeholder="Ex: BUS-001"
+                            required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Placa *</label>
+                        <p:inputText
+                            value="#{veiculoBean.veiculoSelecionado.placa}"
+                            styleClass="form-control"
+                            placeholder="Ex: ABC1D23"
+                            required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Modelo *</label>
+                        <p:inputText
+                            value="#{veiculoBean.veiculoSelecionado.modelo}"
+                            styleClass="form-control"
+                            required="true"/>
+                    </div>
+                </div>
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label class="form-label">Motorista *</label>
+                        <p:inputText
+                            value="#{veiculoBean.veiculoSelecionado.motorista}"
+                            styleClass="form-control"
+                            required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Poltronas *</label>
+                        <p:inputNumber
+                            value="#{veiculoBean.veiculoSelecionado.qtdPoltronas}"
+                            styleClass="form-control"
+                            minValue="1" maxValue="200"
+                            required="true"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data Compra</label>
+                        <p:datePicker
+                            value="#{veiculoBean.veiculoSelecionado.dataCompra}"
+                            styleClass="form-control"
+                            pattern="dd/MM/yyyy"/>
+                    </div>
+                </div>
+                <div class="form-acoes">
+                    <p:commandButton value="Salvar"
+                        styleClass="btn btn-sucesso"
+                        action="#{veiculoBean.salvar}"
+                        update=":formVeiculo @(.card)"
+                        oncomplete="if(!args.validationFailed) PF('dlgVeiculo').hide()"/>
+                    <p:commandButton value="Cancelar"
+                        styleClass="btn btn-cinza"
+                        onclick="PF('dlgVeiculo').hide(); return false;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
 </html>

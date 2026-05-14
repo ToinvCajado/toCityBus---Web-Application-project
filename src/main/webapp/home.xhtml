@@ -1,15 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Início - ToCityBus</ui:define>
+
+    <ui:define name="conteudo">
+        <h1 class="page-title">Painel Principal</h1>
+        <p style="color:#6b7280;margin-top:6px">
+            Selecione uma opção para começar.
+        </p>
+        <div class="menu-grid">
+            <h:link outcome="/cidade/lista" styleClass="menu-item">
+                <div class="menu-item-icone">🏙️</div>
+                <div class="menu-item-titulo">Cidades</div>
+                <div class="menu-item-desc">Cadastrar e consultar cidades</div>
+            </h:link>
+            <h:link outcome="/veiculo/lista" styleClass="menu-item">
+                <div class="menu-item-icone">🚌</div>
+                <div class="menu-item-titulo">Veículos</div>
+                <div class="menu-item-desc">Gerenciar frota de ônibus</div>
+            </h:link>
+            <h:link outcome="/passagem/lista" styleClass="menu-item">
+                <div class="menu-item-icone">🎫</div>
+                <div class="menu-item-titulo">Passagens</div>
+                <div class="menu-item-desc">Vender e consultar passagens</div>
+            </h:link>
+            <h:link outcome="/passagem/roteiro" styleClass="menu-item">
+                <div class="menu-item-icone">🗺️</div>
+                <div class="menu-item-titulo">Por Roteiro</div>
+                <div class="menu-item-desc">Passagens vendidas por rota</div>
+            </h:link>
+            <h:link outcome="/passagem/faturamento" styleClass="menu-item">
+                <div class="menu-item-icone">💰</div>
+                <div class="menu-item-titulo">Faturamento</div>
+                <div class="menu-item-desc">Relatório financeiro por período</div>
+            </h:link>
+        </div>
+    </ui:define>
+
+</ui:composition>
 </html>

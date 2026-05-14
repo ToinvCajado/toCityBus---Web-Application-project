@@ -1,15 +1,114 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Cidades - ToCityBus</ui:define>
+
+    <ui:define name="conteudo">
+        <p:messages showDetail="false"/>
+        <h:form>
+            <div class="page-header">
+                <h1 class="page-title">Cidades</h1>
+                <p:commandButton value="+ Nova Cidade"
+                    styleClass="btn btn-primary"
+                    action="#{cidadeBean.novaCidade}"
+                    update=":formCidade"
+                    oncomplete="PF('dlgCidade').show()"/>
+            </div>
+
+            <div class="barra-busca">
+                <p:inputText value="#{cidadeBean.termoBusca}"
+                             styleClass="form-control"
+                             placeholder="Buscar por nome..."/>
+                <p:commandButton value="Buscar"
+                    styleClass="btn btn-cinza"
+                    action="#{cidadeBean.buscar}"
+                    update="tabelaCidades"/>
+                <p:commandButton value="Limpar"
+                    styleClass="btn btn-cinza"
+                    action="#{cidadeBean.init}"
+                    update="tabelaCidades"/>
+            </div>
+
+            <div class="card">
+                <p:dataTable id="tabelaCidades"
+                             value="#{cidadeBean.cidades}"
+                             var="cidade"
+                             emptyMessage="Nenhuma cidade cadastrada.">
+                    <p:column headerText="Sigla IBGE">
+                        <h:outputText value="#{cidade.idCidade}"/>
+                    </p:column>
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{cidade.nomeCidade}"/>
+                    </p:column>
+                    <p:column headerText="UF">
+                        <h:outputText value="#{cidade.uf}"/>
+                    </p:column>
+                    <p:column headerText="Ações">
+                        <p:commandButton value="Editar"
+                            styleClass="btn btn-cinza btn-sm"
+                            action="#{cidadeBean.prepararEdicao(cidade)}"
+                            update=":formCidade"
+                            oncomplete="PF('dlgCidade').show()"/>
+                        <p:commandButton value="Excluir"
+                            styleClass="btn btn-perigo btn-sm"
+                            action="#{cidadeBean.excluir(cidade)}"
+                            update="tabelaCidades"
+                            onclick="return confirm('Excluir esta cidade?')"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <p:dialog header="Cidade" widgetVar="dlgCidade"
+                  modal="true" width="500">
+            <h:form id="formCidade">
+                <p:messages showDetail="true"/>
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label class="form-label">Sigla IBGE *</label>
+                        <p:inputText
+                            value="#{cidadeBean.cidadeSelecionada.idCidade}"
+                            styleClass="form-control"
+                            placeholder="Ex: SSA"
+                            maxlength="10" required="true"
+                            requiredMessage="Sigla obrigatória"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nome *</label>
+                        <p:inputText
+                            value="#{cidadeBean.cidadeSelecionada.nomeCidade}"
+                            styleClass="form-control"
+                            placeholder="Ex: Salvador"
+                            required="true"
+                            requiredMessage="Nome obrigatório"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">UF *</label>
+                        <p:inputText
+                            value="#{cidadeBean.cidadeSelecionada.uf}"
+                            styleClass="form-control"
+                            placeholder="Ex: BA"
+                            maxlength="2" required="true"
+                            requiredMessage="UF obrigatória"/>
+                    </div>
+                </div>
+                <div class="form-acoes">
+                    <p:commandButton value="Salvar"
+                        styleClass="btn btn-sucesso"
+                        action="#{cidadeBean.salvar}"
+                        update=":tabelaCidades :formCidade"
+                        oncomplete="if(!args.validationFailed) PF('dlgCidade').hide()"/>
+                    <p:commandButton value="Cancelar"
+                        styleClass="btn btn-cinza"
+                        onclick="PF('dlgCidade').hide(); return false;"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
 </html>

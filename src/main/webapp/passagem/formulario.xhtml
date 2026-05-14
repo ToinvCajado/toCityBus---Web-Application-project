@@ -1,15 +1,133 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Vender Passagem - ToCityBus</ui:define>
+
+    <ui:define name="conteudo">
+        <div class="page-header">
+            <h1 class="page-title">Vender Passagem</h1>
+        </div>
+        <div class="alert alert-info">
+            ⚠️ A passagem é gerada no momento da compra.
+        </div>
+        <p:messages showDetail="true"/>
+
+        <h:form>
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label class="form-label">Veículo *</label>
+                        <p:selectOneMenu
+                            value="#{passagemBean.passagemSelecionada.veiculo.id}"
+                            styleClass="form-control"
+                            required="true"
+                            requiredMessage="Selecione um veículo">
+                            <f:selectItem itemLabel="-- Selecione --"
+                                         itemValue="#{null}"/>
+                            <f:selectItems
+                                value="#{passagemBean.veiculos}"
+                                var="v"
+                                itemValue="#{v.id}"
+                                itemLabel="#{v.placa} - #{v.modelo} (#{v.qtdPoltronas} poltronas)"/>
+                        </p:selectOneMenu>
+                    </div>
+
+                    <div class="form-linha">
+                        <div class="form-group">
+                            <label class="form-label">Poltrona *</label>
+                            <p:inputNumber
+                                value="#{passagemBean.passagemSelecionada.poltrona}"
+                                styleClass="form-control"
+                                minValue="1"
+                                required="true"
+                                requiredMessage="Poltrona obrigatória"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data Saída *</label>
+                            <p:datePicker
+                                value="#{passagemBean.passagemSelecionada.dataSaida}"
+                                styleClass="form-control"
+                                pattern="dd/MM/yyyy"
+                                required="true"
+                                requiredMessage="Data obrigatória"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hora *</label>
+                            <p:inputMask
+                                value="#{passagemBean.passagemSelecionada.horaSaida}"
+                                mask="99:99"
+                                styleClass="form-control"
+                                placeholder="Ex: 08:30"
+                                required="true"
+                                requiredMessage="Hora obrigatória"/>
+                        </div>
+                    </div>
+
+                    <div class="form-linha">
+                        <div class="form-group">
+                            <label class="form-label">Origem *</label>
+                            <p:selectOneMenu
+                                value="#{passagemBean.passagemSelecionada.cidadeOrigem.idCidade}"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Selecione a origem">
+                                <f:selectItem itemLabel="-- Origem --"
+                                             itemValue="#{null}"/>
+                                <f:selectItems
+                                    value="#{passagemBean.cidades}"
+                                    var="c"
+                                    itemValue="#{c.idCidade}"
+                                    itemLabel="#{c.nomeCidade} - #{c.uf}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Destino *</label>
+                            <p:selectOneMenu
+                                value="#{passagemBean.passagemSelecionada.cidadeDestino.idCidade}"
+                                styleClass="form-control"
+                                required="true"
+                                requiredMessage="Selecione o destino">
+                                <f:selectItem itemLabel="-- Destino --"
+                                             itemValue="#{null}"/>
+                                <f:selectItems
+                                    value="#{passagemBean.cidades}"
+                                    var="c"
+                                    itemValue="#{c.idCidade}"
+                                    itemLabel="#{c.nomeCidade} - #{c.uf}"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Valor (R$) *</label>
+                            <p:inputNumber
+                                value="#{passagemBean.passagemSelecionada.valorPassagem}"
+                                styleClass="form-control"
+                                minValue="0.01"
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                required="true"
+                                requiredMessage="Valor obrigatório"/>
+                        </div>
+                    </div>
+
+                    <div class="form-acoes">
+                        <p:commandButton value="Confirmar Venda"
+                            styleClass="btn btn-sucesso"
+                            action="#{passagemBean.vender}"
+                            update="@form"/>
+                        <h:link outcome="/passagem/lista"
+                                styleClass="btn btn-cinza">
+                            Cancelar
+                        </h:link>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
 </html>

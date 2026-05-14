@@ -1,15 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/xhtml.xhtml to edit this template
--->
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title><ui:insert name="titulo">Passagens</ui:insert></title>
+    <h:outputStylesheet library="resources" name="style.css"/>
+</h:head>
+<h:body>
+    <div class="navbar">
+        <h:link outcome="/home" value="🚌 ToCityBus" styleClass="navbar-brand"/>
+        <div class="navbar-links">
+            <h:link outcome="/home" value="Início"/>
+            <h:link outcome="/cidade/lista" value="Cidades"/>
+            <h:link outcome="/veiculo/lista" value="Veículos"/>
+            <h:link outcome="/passagem/lista" value="Passagens"/>
+            <h:link outcome="/passagem/roteiro" value="Por Roteiro"/>
+            <h:link outcome="/passagem/faturamento" value="Faturamento"/>
+            <h:form>
+                <h:commandLink value="Sair"
+                    action="#{loginBean.logout}"
+                    immediate="true"/>
+            </h:form>
+        </div>
+    </div>
+    <div class="container">
+        <ui:insert name="conteudo"/>
+    </div>
+</h:body>
 </html>
