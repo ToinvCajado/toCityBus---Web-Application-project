@@ -1,13 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package services;
+package com.mycompany.pi_passagens.services;
 
-import model.Cidade;
+import com.mycompany.pi_passagens.model.Cidade;
+import com.mycompany.pi_passagens.repository.CidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.CidadeRepository;
 import java.util.List;
 
 @Service
@@ -31,8 +27,12 @@ public class CidadeService {
     public void excluir(String id) {
         repository.deleteById(id);
     }
-    
+
     public Cidade buscarPorId(String id) {
         return repository.findById(id).orElse(null);
+    }
+
+    public List<Cidade> buscarPorNome(String nome) {
+        return repository.findByNomeCidadeContainingIgnoreCase(nome);
     }
 }

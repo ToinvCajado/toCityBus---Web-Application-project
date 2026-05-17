@@ -24,7 +24,7 @@
                     <div class="form-group">
                         <label class="form-label">Veículo *</label>
                         <p:selectOneMenu
-                            value="#{passagemBean.passagemSelecionada.veiculo.id}"
+                            value="#{passagemBean.idVeiculoSelecionado}"
                             styleClass="form-control"
                             required="true"
                             requiredMessage="Selecione um veículo">
@@ -73,7 +73,7 @@
                         <div class="form-group">
                             <label class="form-label">Origem *</label>
                             <p:selectOneMenu
-                                value="#{passagemBean.passagemSelecionada.cidadeOrigem.idCidade}"
+                                value="#{passagemBean.idOrigemSelecionada}"
                                 styleClass="form-control"
                                 required="true"
                                 requiredMessage="Selecione a origem">
@@ -89,7 +89,7 @@
                         <div class="form-group">
                             <label class="form-label">Destino *</label>
                             <p:selectOneMenu
-                                value="#{passagemBean.passagemSelecionada.cidadeDestino.idCidade}"
+                                value="#{passagemBean.idDestinoSelecionada}"
                                 styleClass="form-control"
                                 required="true"
                                 requiredMessage="Selecione o destino">

@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package services;
+package com.mycompany.pi_passagens.services;
 
-import model.Usuario;
-import repository.UsuarioRepository;
+import com.mycompany.pi_passagens.model.Usuario;
+import com.mycompany.pi_passagens.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,12 +20,13 @@ public class AutenticacaoService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Usuario usuario = repository.findByLogin(login)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+            .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + login));
 
         return User.builder()
-                .username(usuario.getLogin())
-                .password(usuario.getSenha()) // Atenção: O Spring exige senha criptografada (ver abaixo)
-                .roles(usuario.getRole().replace("ROLE_", ""))
-                .build();
+            .username(usuario.getLogin())
+            .password(usuario.getSenha())
+            // Remove o prefixo ROLE_ porque o método .roles() adiciona o prefixo automaticamente por baixo dos panos
+            .roles(usuario.getRole().replace("ROLE_", "")) 
+            .build();
     }
 }

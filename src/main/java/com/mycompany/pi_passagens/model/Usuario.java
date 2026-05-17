@@ -1,4 +1,4 @@
-package model;
+package com.mycompany.pi_passagens.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
