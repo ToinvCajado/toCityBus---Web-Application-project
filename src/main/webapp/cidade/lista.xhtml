@@ -9,7 +9,8 @@
 
     <ui:define name="conteudo">
         <p:messages showDetail="false"/>
-        <h:form>
+        
+        <h:form id="formListagem">
             <div class="page-header">
                 <h1 class="page-title">Cidades</h1>
                 <p:commandButton value="+ Nova Cidade"
@@ -100,7 +101,7 @@
                     <p:commandButton value="Salvar"
                         styleClass="btn btn-sucesso"
                         action="#{cidadeBean.salvar}"
-                        update=":tabelaCidades :formCidade"
+                        update=":formListagem:tabelaCidades :formCidade"
                         oncomplete="if(!args.validationFailed) PF('dlgCidade').hide()"/>
                     <p:commandButton value="Cancelar"
                         styleClass="btn btn-cinza"
