@@ -1,31 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package reports;
-
-/**
- *
- * @author Micro
- */
 
 import java.util.Properties;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
-import jakarta.activation.*;
 
 public class Email {
+
     public static void main(String[] args) {
 
         final String email = "gust92337@gmail.com";
         final String senha = "#Essej01";
-        String destino = request.getParameter("email");
-        
-        message.setRecipients(
-                Message.RecipientType.TO,
-                InternetAddress.parse(destino)
-                
-        );
+
+        String destino = "teste@gmail.com";
 
         Properties props = new Properties();
 
@@ -37,8 +23,7 @@ public class Email {
         Session session = Session.getInstance(
             props,
             new Authenticator() {
-                protected PasswordAuthentication
-                getPasswordAuthentication() {
+                protected PasswordAuthentication getPasswordAuthentication() {
 
                     return new PasswordAuthentication(
                         email,
@@ -50,8 +35,7 @@ public class Email {
 
         try {
 
-            Message message =
-                new MimeMessage(session);
+            Message message = new MimeMessage(session);
 
             message.setFrom(
                 new InternetAddress(email)

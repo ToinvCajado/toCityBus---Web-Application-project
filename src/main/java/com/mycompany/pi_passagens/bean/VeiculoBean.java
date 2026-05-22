@@ -1,4 +1,4 @@
-package com.mycompany.pi_passagens.beans;
+package com.mycompany.pi_passagens.bean;
 
 import com.mycompany.pi_passagens.model.Veiculo;
 import com.mycompany.pi_passagens.services.VeiculoService;

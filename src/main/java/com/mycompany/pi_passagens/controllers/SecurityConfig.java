@@ -25,7 +25,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10);
     }
 
     @Bean
@@ -41,7 +41,7 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
-
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -56,7 +56,11 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
             )
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-            .formLogin(form -> form.permitAll())
+            .formLogin(form -> form
+                .loginPage("/login.xhtml")
+                .defaultSuccessUrl("/index.xhtml", true) // Coloque aqui sua página inicial
+                .permitAll()
+                )
             .logout(logout -> logout.permitAll());
 
         return http.build();

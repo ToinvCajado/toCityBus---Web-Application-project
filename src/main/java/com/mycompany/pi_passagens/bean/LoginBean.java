@@ -1,4 +1,4 @@
-package com.mycompany.pi_passagens.beans;
+package com.mycompany.pi_passagens.bean;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;

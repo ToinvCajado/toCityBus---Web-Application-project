@@ -3,39 +3,52 @@ package com.mycompany.pi_passagens.services;
 import com.mycompany.pi_passagens.model.Usuario;
 import com.mycompany.pi_passagens.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class UsuarioService {
-
-    private final UsuarioRepository repository;
-    private final PasswordEncoder passwordEncoder;
+public class UsuarioService implements UserDetailsService {
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String login)
+            throws UsernameNotFoundException {
+        Usuario u = usuarioRepository.findByLogin(login)
+            .orElseThrow(() -> new UsernameNotFoundException(
+                "Usuário não encontrado: " + login));
+        return User.builder()
+            .username(u.getLogin())
+            .password(u.getSenha())
+            .roles(u.getRole().replace("ROLE_", ""))
+            .build();
     }
 
+    @Transactional
     public Usuario salvar(Usuario usuario) {
-        if (repository.existsByLogin(usuario.getLogin())) {
-            throw new RuntimeException("Login já cadastrado.");
-        }
-        if (repository.existsByEmail(usuario.getEmail())) {
-            throw new RuntimeException("E-mail já cadastrado.");
-        }
-        // Garante a segurança criptografando a senha digitada na tela antes de mandar pro banco
-        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
-        return repository.save(usuario);
+        if (usuarioRepository.existsByLogin(usuario.getLogin()))
+            throw new RuntimeException(
+                "Já existe usuário com login: " + usuario.getLogin());
+        usuario.setSenha(
+            passwordEncoder.encode(usuario.getSenha()));
+        return usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public void excluir(Long id) {
+        if (!usuarioRepository.existsById(id))
+            throw new RuntimeException("Usuário não encontrado.");
+        usuarioRepository.deleteById(id);
     }
 
     public List<Usuario> listarTodos() {
-        return repository.findAll();
-    }
-
-    public void excluir(Long id) {
-        repository.deleteById(id);
+        return usuarioRepository.findAll();
     }
 }

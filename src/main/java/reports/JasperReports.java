@@ -9,7 +9,7 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JREmptyDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 
 public class JasperReports {
 

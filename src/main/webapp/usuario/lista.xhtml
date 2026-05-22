@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+<ui:composition template="/template/layout.xhtml">
+
+    <ui:define name="titulo">Usuários</ui:define>
+
+    <ui:define name="conteudo">
+        <p:messages showDetail="false"/>
+        <h:form>
+            <div class="page-header">
+                <h1 class="page-title">Usuários</h1>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-linha">
+                        <div class="form-group">
+                            <label class="form-label">Nome *</label>
+                            <p:inputText value="#{usuarioBean.usuarioSelecionado.nome}"
+                                         styleClass="form-control"
+                                         placeholder="Nome completo"
+                                         required="true"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cargo *</label>
+                            <p:inputText value="#{usuarioBean.usuarioSelecionado.cargo}"
+                                         styleClass="form-control"
+                                         placeholder="Ex: Atendente"
+                                         required="true"/>
+                        </div>
+                    </div>
+                    <div class="form-linha">
+                        <div class="form-group">
+                            <label class="form-label">Login *</label>
+                            <p:inputText value="#{usuarioBean.usuarioSelecionado.login}"
+                                         styleClass="form-control"
+                                         placeholder="Seu login"
+                                         required="true"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Senha *</label>
+                            <p:password value="#{usuarioBean.usuarioSelecionado.senha}"
+                                        styleClass="form-control"
+                                        placeholder="Sua senha"
+                                        feedback="false"
+                                        required="true"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <p:inputText value="#{usuarioBean.usuarioSelecionado.email}"
+                                         styleClass="form-control"
+                                         placeholder="email@exemplo.com"
+                                         required="true"/>
+                        </div>
+                    </div>
+                    <div class="form-acoes">
+                        <p:commandButton value="Salvar"
+                            styleClass="btn btn-sucesso"
+                            action="#{usuarioBean.salvar}"
+                            update="@form"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top:18px">
+                <p:dataTable value="#{usuarioBean.usuarios}"
+                             var="u"
+                             emptyMessage="Nenhum usuário cadastrado.">
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{u.nome}"/>
+                    </p:column>
+                    <p:column headerText="Cargo">
+                        <h:outputText value="#{u.cargo}"/>
+                    </p:column>
+                    <p:column headerText="Login">
+                        <h:outputText value="#{u.login}"/>
+                    </p:column>
+                    <p:column headerText="Email">
+                        <h:outputText value="#{u.email}"/>
+                    </p:column>
+                    <p:column headerText="Ações">
+                        <p:commandButton value="Excluir"
+                            styleClass="btn btn-perigo btn-sm"
+                            action="#{usuarioBean.excluir(u)}"
+                            update="@form"
+                            onclick="return confirm('Excluir?')"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
+</html>
