@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/jakarta.faces.resource/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login.xhtml")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/usuario/cadastro.xhtml")).permitAll()
                 // Troque a linha abaixo para .anyRequest().authenticated()
                 // quando o login estiver funcionando
                 .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()

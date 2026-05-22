@@ -13,4 +13,8 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // Necessário para o Spring Security validar o login
     Optional<Usuario> findByLogin(String login);
+
+    // Verificações de duplicidade para o cadastro
+    boolean existsByLogin(String login);
+    boolean existsByEmail(String email);
 }

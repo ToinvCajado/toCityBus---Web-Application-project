@@ -20,6 +20,12 @@ public class UsuarioService {
     }
 
     public Usuario salvar(Usuario usuario) {
+        if (repository.existsByLogin(usuario.getLogin())) {
+            throw new RuntimeException("Login já cadastrado.");
+        }
+        if (repository.existsByEmail(usuario.getEmail())) {
+            throw new RuntimeException("E-mail já cadastrado.");
+        }
         // Garante a segurança criptografando a senha digitada na tela antes de mandar pro banco
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return repository.save(usuario);
