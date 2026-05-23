@@ -8,11 +8,9 @@ import com.mycompany.pi_passagens.services.PassagemService;
 import com.mycompany.pi_passagens.services.VeiculoService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
-import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -20,7 +18,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import reports.JasperReports;
 
 @Named("passagemBean")
@@ -30,7 +27,7 @@ public class PassagemBean implements Serializable {
     @Autowired private PassagemService service;
     @Autowired private CidadeService cidadeService;
     @Autowired private VeiculoService veiculoService;
-    @Autowired private JasperReports jasperReports;
+    @Autowired(required = false) private JasperReports jasperReports; // Opcional para não travar o init
 
     private List<Passagem> passagens;
     private Passagem passagemSelecionada = new Passagem();
@@ -48,71 +45,29 @@ public class PassagemBean implements Serializable {
 
     private String idOrigemRoteiro;
     private String idDestinoRoteiro;
-    private LocalDate dataRoteiro;
     private List<Passagem> passagensRoteiro;
+    
+    private LocalDate dataRoteiro;
+
 
     @PostConstruct
     public void init() {
-        // Tenta injetar via Spring Context apenas se o @Autowired falhar (segurança)
-        if (this.service == null) {
-            var servletContext = (jakarta.servlet.ServletContext) FacesContext.getCurrentInstance()
-                    .getExternalContext().getContext();
-            var springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-            
-            this.service = springContext.getBean(PassagemService.class);
-            this.cidadeService = springContext.getBean(CidadeService.class);
-            this.veiculoService = springContext.getBean(VeiculoService.class);
-            this.jasperReports = springContext.getBean(JasperReports.class);
+        try {
+            listar();
+            if (cidadeService != null) this.cidades = cidadeService.listarTodas();
+            if (veiculoService != null) this.veiculos = veiculoService.listarTodos();
+        } catch (Exception e) {
+            System.err.println("Erro no init do PassagemBean: " + e.getMessage());
         }
-
-        listar();
-        this.cidades = cidadeService.listarTodas();
-        this.veiculos = veiculoService.listarTodos();
     }
 
     public void listar() {
-        this.passagens = service.listarTodas();
-    }
-
-    public void excluir(Passagem p) {
-        try {
-            service.excluir(p.getIdPassagem());
-            addMessage("Sucesso", "Passagem removida.");
-            listar();
-        } catch (Exception e) {
-            addErrorMessage("Erro", e.getMessage());
-        }
-    }
-
-    public String vender() {
-        try {
-            if (idVeiculoSelecionado != null)
-                passagemSelecionada.setVeiculo(veiculoService.buscarPorId(idVeiculoSelecionado));
-            if (idOrigemSelecionada != null)
-                passagemSelecionada.setCidadeOrigem(cidadeService.buscarPorId(idOrigemSelecionada));
-            if (idDestinoSelecionada != null)
-                passagemSelecionada.setCidadeDestino(cidadeService.buscarPorId(idDestinoSelecionada));
-
-            service.venderPassagem(passagemSelecionada);
-            
-            resetCamposVenda();
-            return "/passagem/lista?faces-redirect=true";
-        } catch (Exception e) {
-            addErrorMessage("Erro", e.getMessage());
-            return null;
-        }
-    }
-
-    private void resetCamposVenda() {
-        this.passagemSelecionada = new Passagem();
-        this.idVeiculoSelecionado = null;
-        this.idOrigemSelecionada = null;
-        this.idDestinoSelecionada = null;
+        if (service != null) this.passagens = service.listarTodas();
     }
 
     public void calcularFaturamento() {
         if (inicioFaturamento == null || fimFaturamento == null) {
-            addWarningMessage("Atenção", "Informe as duas datas.");
+            addMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Informe as duas datas.");
             return;
         }
         Date inicio = Date.from(inicioFaturamento.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -123,43 +78,17 @@ public class PassagemBean implements Serializable {
 
     public void consultarRoteiro() {
         if (idOrigemRoteiro == null || idDestinoRoteiro == null) {
-            addWarningMessage("Atenção", "Selecione origem e destino.");
+            addMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Selecione origem e destino.");
             return;
         }
         this.passagensRoteiro = service.listarPassagensPorRoteiro(idOrigemRoteiro, idDestinoRoteiro);
     }
 
-    public void baixarRelatorio() {
-        try {
-            byte[] pdf = jasperReports.gerarRelatorioPdf();
-            FacesContext fc = FacesContext.getCurrentInstance();
-            ExternalContext ec = fc.getExternalContext();
-            
-            ec.responseReset();
-            ec.setResponseContentType("application/pdf");
-            ec.setResponseContentLength(pdf.length);
-            ec.setResponseHeader("Content-Disposition", "attachment; filename=\"relatorio.pdf\"");
-            ec.getResponseOutputStream().write(pdf);
-            fc.responseComplete();
-        } catch (IOException e) {
-            addErrorMessage("Erro", "Falha ao gerar o relatório: " + e.getMessage());
-        }
+    private void addMessage(FacesMessage.Severity severity, String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
     }
 
-    // Métodos auxiliares para mensagens (limpa o código)
-    private void addMessage(String summary, String detail) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary, detail));
-    }
-    
-    private void addErrorMessage(String summary, String detail) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail));
-    }
-    
-    private void addWarningMessage(String summary, String detail) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, summary, detail));
-    }
-
-    // Getters e Setters (Mantidos conforme original)
+    // Getters e Setters essenciais para as telas funcionarem
     public List<Passagem> getPassagens() { return passagens; }
     public Passagem getPassagemSelecionada() { return passagemSelecionada; }
     public void setPassagemSelecionada(Passagem p) { this.passagemSelecionada = p; }
@@ -181,7 +110,12 @@ public class PassagemBean implements Serializable {
     public void setIdOrigemRoteiro(String id) { this.idOrigemRoteiro = id; }
     public String getIdDestinoRoteiro() { return idDestinoRoteiro; }
     public void setIdDestinoRoteiro(String id) { this.idDestinoRoteiro = id; }
-    public LocalDate getDataRoteiro() { return dataRoteiro; }
-    public void setDataRoteiro(LocalDate d) { this.dataRoteiro = d; }
     public List<Passagem> getPassagensRoteiro() { return passagensRoteiro; }
+        public LocalDate getDataRoteiro() { 
+        return dataRoteiro; 
+    }
+    public void setDataRoteiro(LocalDate dataRoteiro) { 
+        this.dataRoteiro = dataRoteiro; 
+    }
+
 }
