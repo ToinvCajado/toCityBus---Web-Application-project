@@ -11,48 +11,53 @@
         <p:messages showDetail="false"/>
         <h:form>
             <div class="page-header">
-                <h1 class="page-title">Usuários</h1>
+                <h1 class="page-title">Cadastro de Usuários</h1>
             </div>
             <div class="card">
                 <div class="card-body">
                     <div class="form-linha">
                         <div class="form-group">
                             <label class="form-label">Nome *</label>
-                            <p:inputText value="#{usuarioBean.usuarioSelecionado.nome}"
-                                         styleClass="form-control"
-                                         placeholder="Nome completo"
-                                         required="true"/>
+                            <p:inputText
+                                value="#{usuarioBean.usuarioSelecionado.nome}"
+                                styleClass="form-control"
+                                placeholder="Nome completo"
+                                required="true"/>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Cargo *</label>
-                            <p:inputText value="#{usuarioBean.usuarioSelecionado.cargo}"
-                                         styleClass="form-control"
-                                         placeholder="Ex: Atendente"
-                                         required="true"/>
+                            <p:inputText
+                                value="#{usuarioBean.usuarioSelecionado.cargo}"
+                                styleClass="form-control"
+                                placeholder="Ex: Atendente"
+                                required="true"/>
                         </div>
                     </div>
                     <div class="form-linha">
                         <div class="form-group">
                             <label class="form-label">Login *</label>
-                            <p:inputText value="#{usuarioBean.usuarioSelecionado.login}"
-                                         styleClass="form-control"
-                                         placeholder="Seu login"
-                                         required="true"/>
+                            <p:inputText
+                                value="#{usuarioBean.usuarioSelecionado.login}"
+                                styleClass="form-control"
+                                placeholder="Seu login"
+                                required="true"/>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Senha *</label>
-                            <p:password value="#{usuarioBean.usuarioSelecionado.senha}"
-                                        styleClass="form-control"
-                                        placeholder="Sua senha"
-                                        feedback="false"
-                                        required="true"/>
+                            <p:password
+                                value="#{usuarioBean.usuarioSelecionado.senha}"
+                                styleClass="form-control"
+                                placeholder="Sua senha"
+                                feedback="false"
+                                required="true"/>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email *</label>
-                            <p:inputText value="#{usuarioBean.usuarioSelecionado.email}"
-                                         styleClass="form-control"
-                                         placeholder="email@exemplo.com"
-                                         required="true"/>
+                            <p:inputText
+                                value="#{usuarioBean.usuarioSelecionado.email}"
+                                styleClass="form-control"
+                                placeholder="email@exemplo.com"
+                                required="true"/>
                         </div>
                     </div>
                     <div class="form-acoes">

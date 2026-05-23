@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.pi_passagens.repository;
 
 import com.mycompany.pi_passagens.model.Usuario;
@@ -10,11 +6,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    // Necessário para o Spring Security validar o login
-    Optional<Usuario> findByLogin(String login);
+public interface UsuarioRepository
+        extends JpaRepository<Usuario, Long> {
 
-    // Verificações de duplicidade para o cadastro
+    Optional<Usuario> findByLogin(String login);
     boolean existsByLogin(String login);
     boolean existsByEmail(String email);
 }

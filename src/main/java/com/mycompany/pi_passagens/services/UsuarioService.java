@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -22,12 +21,9 @@ public class UsuarioService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login)
             throws UsernameNotFoundException {
-
         Usuario u = usuarioRepository.findByLogin(login)
-            .orElseThrow(() ->
-                new UsernameNotFoundException(
-                    "Usuário não encontrado: " + login));
-
+            .orElseThrow(() -> new UsernameNotFoundException(
+                "Usuário não encontrado: " + login));
         return User.builder()
             .username(u.getLogin())
             .password(u.getSenha())
@@ -37,56 +33,18 @@ public class UsuarioService implements UserDetailsService {
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
-
-        // INSERT
-        if (usuario.getId() == null) {
-
-            if (usuarioRepository.existsByLogin(usuario.getLogin())) {
-                throw new RuntimeException(
-                    "Já existe usuário com login: "
-                    + usuario.getLogin());
-            }
-
-            if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-                throw new RuntimeException(
-                    "Já existe usuário com e-mail: "
-                    + usuario.getEmail());
-            }
-
-        } else {
-
-            // UPDATE
-            usuarioRepository.findByLogin(
-                usuario.getLogin()
-            ).ifPresent(u -> {
-
-                if (!u.getId().equals(usuario.getId())) {
-                    throw new RuntimeException(
-                        "Login já está em uso."
-                    );
-                }
-
-            });
-        }
-
+        if (usuarioRepository.existsByLogin(usuario.getLogin()))
+            throw new RuntimeException(
+                "Já existe usuário com login: " + usuario.getLogin());
         usuario.setSenha(
-            passwordEncoder.encode(
-                usuario.getSenha()
-            )
-        );
-
+            passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
 
     @Transactional
     public void excluir(Long id) {
-
-        if (!usuarioRepository.existsById(id)) {
-            throw new RuntimeException(
-                "Usuário não encontrado."
-            );
-        }
-
+        if (!usuarioRepository.existsById(id))
+            throw new RuntimeException("Usuário não encontrado.");
         usuarioRepository.deleteById(id);
     }
 

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Cadastro de Usuário - ToCityBus</title>
+    <h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+<div class="login-wrapper">
+    <div class="login-card" style="max-width: 500px;">
+        <div class="login-titulo">
+            <p style="font-size:36px">👤</p>
+            <h1>#{usuarioBean.usuarioSelecionado.id == null ? 'Novo Usuário' : 'Editar Usuário'}</h1>
+            <p>#{usuarioBean.usuarioSelecionado.id == null ? 'Preencha os dados para se cadastrar' : 'Altere os dados do usuário'}</p>
+        </div>
+
+        <p:messages id="messages" showDetail="false" closable="true">
+            <p:autoUpdate />
+        </p:messages>
+
+        <h:form id="cadastroForm">
+            <h:inputHidden value="#{usuarioBean.usuarioSelecionado.id}" />
+            
+            <div class="form-group">
+                <label class="form-label">Nome Completo</label>
+                <p:inputText value="#{usuarioBean.usuarioSelecionado.nome}"
+                             styleClass="form-control"
+                             required="true"
+                             requiredMessage="Nome é obrigatório"/>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Cargo</label>
+                <p:inputText value="#{usuarioBean.usuarioSelecionado.cargo}"
+                             styleClass="form-control"
+                             required="true"
+                             requiredMessage="Cargo é obrigatório"/>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">E-mail</label>
+                <p:inputText value="#{usuarioBean.usuarioSelecionado.email}"
+                             styleClass="form-control"
+                             required="true"
+                             requiredMessage="E-mail é obrigatório">
+                    <f:validateRegex pattern="^[\w-\.]+@([\w-]+\. )+[\w-]{2,4}$" />
+                </p:inputText>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Login (Usuário)</label>
+                <p:inputText value="#{usuarioBean.usuarioSelecionado.login}"
+                             styleClass="form-control"
+                             required="true"
+                             requiredMessage="Login é obrigatório"/>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Senha</label>
+                <p:password value="#{usuarioBean.usuarioSelecionado.senha}"
+                            styleClass="form-control"
+                            feedback="true"
+                            promptLabel="Digite uma senha segura"
+                            weakLabel="Fraca"
+                            goodLabel="Boa"
+                            strongLabel="Forte"
+                            required="#{usuarioBean.usuarioSelecionado.id == null}"
+                            requiredMessage="Senha é obrigatória"/>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <p:commandButton value="#{usuarioBean.usuarioSelecionado.id == null ? 'Cadastrar Agora' : 'Salvar Alterações'}"
+                                 action="#{usuarioBean.salvar}"
+                                 styleClass="btn btn-primary"
+                                 style="width:100%;padding:10px"
+                                 update="@form" />
+            </div>
+
+            <div style="text-align: center; margin-top: 15px;">
+                <h:link value="Voltar para a lista" outcome="/usuario/lista.xhtml" style="color: #666; text-decoration: none; font-size: 14px;"/>
+            </div>
+        </h:form>
+    </div>
+</div>
+</h:body>
+</html>

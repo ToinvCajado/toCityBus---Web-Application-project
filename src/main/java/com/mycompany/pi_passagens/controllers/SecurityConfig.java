@@ -25,8 +25,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
@@ -37,7 +36,7 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
-    
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http ) throws Exception {
         http
@@ -46,20 +45,21 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/jakarta.faces.resource/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login.xhtml")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/usuario/cadastro.xhtml")).permitAll()
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .formLogin(form -> form
                 .loginPage("/login.xhtml")
-                .loginProcessingUrl("/perform_login") // "Sai da frente" Spring, o Bean vai cuidar disso!
+                .loginProcessingUrl("/perform_login")
                 .defaultSuccessUrl("/home.xhtml", true)
                 .permitAll()
-
-)
+            )
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login.xhtml")
-                .permitAll());
+                .permitAll()
+            );
 
         return http.build( );
     }

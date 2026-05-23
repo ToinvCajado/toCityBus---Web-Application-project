@@ -5,15 +5,12 @@ import com.mycompany.pi_passagens.services.UsuarioService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.io.Serializable;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Named
-@ViewScoped
+@Component("usuarioBean")
 public class UsuarioBean implements Serializable {
 
     @Autowired
@@ -21,9 +18,6 @@ public class UsuarioBean implements Serializable {
 
     private List<Usuario> usuarios;
     private Usuario usuarioSelecionado;
-
-    public UsuarioBean() {
-    }
 
     @PostConstruct
     public void init() {
@@ -38,54 +32,31 @@ public class UsuarioBean implements Serializable {
     public void salvar() {
         try {
             usuarioService.salvar(usuarioSelecionado);
-
-            addMensagem(
-                FacesMessage.SEVERITY_INFO,
-                "Usuário salvo com sucesso!"
-            );
-
+            addMsg(FacesMessage.SEVERITY_INFO, "Usuário salvo com sucesso!");
             usuarioSelecionado = new Usuario();
             carregarUsuarios();
-
         } catch (Exception e) {
-
-            addMensagem(
-                FacesMessage.SEVERITY_ERROR,
-                e.getMessage()
-            );
+            addMsg(FacesMessage.SEVERITY_ERROR, e.getMessage());
         }
     }
 
     public void excluir(Usuario u) {
         try {
-
             usuarioService.excluir(u.getId());
-
-            addMensagem(
-                FacesMessage.SEVERITY_INFO,
-                "Usuário excluído!"
-            );
-
+            addMsg(FacesMessage.SEVERITY_INFO, "Usuário excluído!");
             carregarUsuarios();
-
         } catch (Exception e) {
-
-            addMensagem(
-                FacesMessage.SEVERITY_ERROR,
-                e.getMessage()
-            );
+            addMsg(FacesMessage.SEVERITY_ERROR, e.getMessage());
         }
     }
 
-    private void addMensagem(
-            FacesMessage.Severity sev,
-            String txt) {
+    public void novoUsuario() {
+        usuarioSelecionado = new Usuario();
+    }
 
+    private void addMsg(FacesMessage.Severity sev, String txt) {
         FacesContext.getCurrentInstance()
-                .addMessage(
-                        null,
-                        new FacesMessage(sev, txt, null)
-                );
+                .addMessage(null, new FacesMessage(sev, txt, null));
     }
 
     public List<Usuario> getUsuarios() {
@@ -96,9 +67,7 @@ public class UsuarioBean implements Serializable {
         return usuarioSelecionado;
     }
 
-    public void setUsuarioSelecionado(
-            Usuario usuarioSelecionado) {
-
+    public void setUsuarioSelecionado(Usuario usuarioSelecionado) {
         this.usuarioSelecionado = usuarioSelecionado;
     }
 }
