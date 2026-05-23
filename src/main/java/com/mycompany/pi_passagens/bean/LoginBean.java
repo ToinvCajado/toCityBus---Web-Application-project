@@ -4,38 +4,29 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-@Named("loginBean")
+@Named("loginBean" )
 @SessionScoped
 public class LoginBean implements Serializable {
 
     private String login;
     private String senha;
 
-    private AuthenticationManager getAuthManager() {
-        return (AuthenticationManager) WebApplicationContextUtils
-            .getRequiredWebApplicationContext(
-                (jakarta.servlet.ServletContext) FacesContext.getCurrentInstance()
-                    .getExternalContext().getContext()
-            ).getBean(AuthenticationManager.class);
-    }
-
     public String autenticar() {
         try {
-            Authentication auth = getAuthManager().authenticate(
-                new UsernamePasswordAuthenticationToken(login, senha)
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
-            return "/home?faces-redirect=true";
-        } catch (AuthenticationException e) {
+            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance()
+                    .getExternalContext().getRequest();
+            
+            // Realiza o login e cria a sessão no Spring Security
+            request.login(login, senha);
+            
+            return "/home.xhtml?faces-redirect=true";
+        } catch (ServletException e) {
             FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "Login inválido", "Usuário ou senha incorretos."));
@@ -48,7 +39,7 @@ public class LoginBean implements Serializable {
         HttpSession session = (HttpSession) ctx.getExternalContext().getSession(false);
         if (session != null) session.invalidate();
         SecurityContextHolder.clearContext();
-        return "/login?faces-redirect=true";
+        return "/login.xhtml?faces-redirect=true";
     }
 
     public String getLogin() { return login; }

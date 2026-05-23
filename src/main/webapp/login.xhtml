@@ -16,28 +16,36 @@
             <p>Faça login para continuar</p>
         </div>
 
-        <p:messages showDetail="false" closable="false"/>
+        <!-- Área para mensagens de erro (Login inválido, etc ) -->
+        <p:messages id="messages" showDetail="false" closable="false">
+            <p:autoUpdate />
+        </p:messages>
 
-        <h:form>
+        <!-- O prependId="false" é fundamental para o Spring Security encontrar os campos -->
+        <h:form id="loginForm" prependId="false">
             <div class="form-group">
                 <label class="form-label">Login</label>
-                <p:inputText value="#{loginBean.login}"
+                <p:inputText id="username" value="#{loginBean.login}"
                              styleClass="form-control"
                              placeholder="Seu login"
                              required="true"
                              requiredMessage="Login obrigatório"/>
             </div>
+            
             <div class="form-group">
                 <label class="form-label">Senha</label>
-                <p:password value="#{loginBean.senha}"
+                <p:password id="password" value="#{loginBean.senha}"
                             styleClass="form-control"
                             placeholder="Sua senha"
                             feedback="false"
                             required="true"
                             requiredMessage="Senha obrigatória"/>
             </div>
+            
+            <!-- ajax="false" garante que o redirecionamento para a home funcione -->
             <p:commandButton value="Entrar"
                              action="#{loginBean.autenticar}"
+                             ajax="false"
                              styleClass="btn btn-primary"
                              style="width:100%;padding:10px"
                              update="@form"/>

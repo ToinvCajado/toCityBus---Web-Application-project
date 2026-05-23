@@ -8,9 +8,11 @@ import com.mycompany.pi_passagens.services.PassagemService;
 import com.mycompany.pi_passagens.services.VeiculoService;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,18 +20,19 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils; // IMPORTANTE
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import reports.JasperReports;
 
 @Named("passagemBean")
 @ViewScoped
 public class PassagemBean implements Serializable {
 
-    @Autowired private PassagemService service;        
-    @Autowired private CidadeService cidadeService;      
-    @Autowired private VeiculoService veiculoService;    
+    @Autowired private PassagemService service;
+    @Autowired private CidadeService cidadeService;
+    @Autowired private VeiculoService veiculoService;
+    @Autowired private JasperReports jasperReports;
 
     private List<Passagem> passagens;
-
     private Passagem passagemSelecionada = new Passagem();
     private Long idVeiculoSelecionado;
     private String idOrigemSelecionada;
@@ -50,8 +53,8 @@ public class PassagemBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // Resgata os 3 serviços necessários do contexto do Spring se estiverem nulos
-        if (this.service == null || this.cidadeService == null || this.veiculoService == null) {
+        // Tenta injetar via Spring Context apenas se o @Autowired falhar (segurança)
+        if (this.service == null) {
             var servletContext = (jakarta.servlet.ServletContext) FacesContext.getCurrentInstance()
                     .getExternalContext().getContext();
             var springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
@@ -59,78 +62,104 @@ public class PassagemBean implements Serializable {
             this.service = springContext.getBean(PassagemService.class);
             this.cidadeService = springContext.getBean(CidadeService.class);
             this.veiculoService = springContext.getBean(VeiculoService.class);
+            this.jasperReports = springContext.getBean(JasperReports.class);
         }
 
         listar();
-        cidades = cidadeService.listarTodas();
-        veiculos = veiculoService.listarTodos();
+        this.cidades = cidadeService.listarTodas();
+        this.veiculos = veiculoService.listarTodos();
     }
 
     public void listar() {
-        passagens = service.listarTodas();
+        this.passagens = service.listarTodas();
     }
 
     public void excluir(Passagem p) {
         try {
             service.excluir(p.getIdPassagem());
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Sucesso", "Passagem removida."));
+            addMessage("Sucesso", "Passagem removida.");
             listar();
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+            addErrorMessage("Erro", e.getMessage());
         }
     }
 
     public String vender() {
         try {
-            if (idVeiculoSelecionado != null) {
+            if (idVeiculoSelecionado != null)
                 passagemSelecionada.setVeiculo(veiculoService.buscarPorId(idVeiculoSelecionado));
-            }
-            if (idOrigemSelecionada != null) {
+            if (idOrigemSelecionada != null)
                 passagemSelecionada.setCidadeOrigem(cidadeService.buscarPorId(idOrigemSelecionada));
-            }
-            if (idDestinoSelecionada != null) {
+            if (idDestinoSelecionada != null)
                 passagemSelecionada.setCidadeDestino(cidadeService.buscarPorId(idDestinoSelecionada));
-            }
 
             service.venderPassagem(passagemSelecionada);
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Sucesso", "Passagem gerada com sucesso!"));
-            passagemSelecionada = new Passagem();
-            idVeiculoSelecionado = null;
-            idOrigemSelecionada = null;
-            idDestinoSelecionada = null;
+            
+            resetCamposVenda();
             return "/passagem/lista?faces-redirect=true";
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+            addErrorMessage("Erro", e.getMessage());
             return null;
         }
     }
 
+    private void resetCamposVenda() {
+        this.passagemSelecionada = new Passagem();
+        this.idVeiculoSelecionado = null;
+        this.idOrigemSelecionada = null;
+        this.idDestinoSelecionada = null;
+    }
+
     public void calcularFaturamento() {
         if (inicioFaturamento == null || fimFaturamento == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Informe as duas datas."));
+            addWarningMessage("Atenção", "Informe as duas datas.");
             return;
         }
         Date inicio = Date.from(inicioFaturamento.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date fim    = Date.from(fimFaturamento.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        totalFaturamento = service.consultarFaturamento(inicio, fim);
-        passagensFaturamento = service.listarPorPeriodo(inicio, fim);
+        this.totalFaturamento = service.consultarFaturamento(inicio, fim);
+        this.passagensFaturamento = service.listarPorPeriodo(inicio, fim);
     }
 
     public void consultarRoteiro() {
         if (idOrigemRoteiro == null || idDestinoRoteiro == null) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_WARN, "Atenção", "Selecione origem e destino."));
+            addWarningMessage("Atenção", "Selecione origem e destino.");
             return;
         }
-        passagensRoteiro = service.listarPassagensPorRoteiro(idOrigemRoteiro, idDestinoRoteiro);
+        this.passagensRoteiro = service.listarPassagensPorRoteiro(idOrigemRoteiro, idDestinoRoteiro);
     }
 
-    // Getters e Setters
+    public void baixarRelatorio() {
+        try {
+            byte[] pdf = jasperReports.gerarRelatorioPdf();
+            FacesContext fc = FacesContext.getCurrentInstance();
+            ExternalContext ec = fc.getExternalContext();
+            
+            ec.responseReset();
+            ec.setResponseContentType("application/pdf");
+            ec.setResponseContentLength(pdf.length);
+            ec.setResponseHeader("Content-Disposition", "attachment; filename=\"relatorio.pdf\"");
+            ec.getResponseOutputStream().write(pdf);
+            fc.responseComplete();
+        } catch (IOException e) {
+            addErrorMessage("Erro", "Falha ao gerar o relatório: " + e.getMessage());
+        }
+    }
+
+    // Métodos auxiliares para mensagens (limpa o código)
+    private void addMessage(String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary, detail));
+    }
+    
+    private void addErrorMessage(String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, detail));
+    }
+    
+    private void addWarningMessage(String summary, String detail) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, summary, detail));
+    }
+
+    // Getters e Setters (Mantidos conforme original)
     public List<Passagem> getPassagens() { return passagens; }
     public Passagem getPassagemSelecionada() { return passagemSelecionada; }
     public void setPassagemSelecionada(Passagem p) { this.passagemSelecionada = p; }

@@ -37,5 +37,5 @@ public class Veiculo {
     @NotNull(message = "Quantidade de poltronas é obrigatória")
     @Min(1)
     @Column(name = "qtd_poltronas", nullable = false)
-    private int qtdPoltronas;
+    private Integer qtdPoltronas;
 }

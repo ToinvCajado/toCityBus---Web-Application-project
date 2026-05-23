@@ -1,41 +1,32 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package reports;
 
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JREmptyDataSource; // Importação corrigida
+import org.springframework.stereotype.Component;
+import java.io.ByteArrayOutputStream;
 
+@Component
 public class JasperReports {
 
-    public static void main(String[] args) {
+    public byte[] gerarRelatorioPdf() {
         try {
-            JasperReport jasper =
-                JasperCompileManager.compileReport(
-                    "src/relatorio.jrxml"
-                );
+            // Caminho para o seu arquivo XML de relatório
+            String path = "src/main/resources/META-INF/relatorio.xml"; 
 
-            JasperPrint print =
-                JasperFillManager.fillReport(
-                    jasper,
-                    null,
-                    new JREmptyDataSource()
-                );
+            // Compila o relatório
+            JasperReport jasper = JasperCompileManager.compileReport(path);
+            
+            // Preenche o relatório (usando um DataSource vazio por enquanto)
+            JasperPrint print = JasperFillManager.fillReport(jasper, null, new JREmptyDataSource());
 
-            JasperExportManager.exportReportToPdfFile(
-                print,
-                "relatorio.pdf"
-            );
-
-            System.out.println("PDF gerado!");
-
+            // Converte para byte array para o navegador baixar
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            JasperExportManager.exportReportToPdfStream(print, out);
+            
+            return out.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage());
         }
     }
 }

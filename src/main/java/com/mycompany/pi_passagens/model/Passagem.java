@@ -17,7 +17,7 @@ public class Passagem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idPassagem; // Conforme requisito: int
+    private Integer idPassagem; // Conforme requisito: int
 
     @NotNull
     @ManyToOne
@@ -25,7 +25,7 @@ public class Passagem {
     private Veiculo veiculo;
 
     @Min(1)
-    private int poltrona;
+    private Integer poltrona;
 
     @NotNull
     @Temporal(TemporalType.DATE)
