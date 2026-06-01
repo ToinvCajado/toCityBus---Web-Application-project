@@ -26,9 +26,36 @@ public class Cidade {
     @Column(name = "uf", nullable = false, length = 2)
     private String uf;
 
+   
     public Cidade(String idCidade, String nomeCidade, String uf) {
         this.idCidade = idCidade;
         this.nomeCidade = nomeCidade;
         this.uf = uf;
     }
+
+    public String getIdCidade() {
+        return idCidade;
+    }
+
+    public void setIdCidade(String idCidade) {
+        this.idCidade = idCidade;
+    }
+
+    public String getNomeCidade() {
+        return nomeCidade;
+    }
+
+    public void setNomeCidade(String nomeCidade) {
+        this.nomeCidade = nomeCidade;
+    }
+
+    public String getUf() {
+        return uf;
+    }
+
+    public void setUf(String uf) {
+        this.uf = uf;
+    }
+    
+    
 }

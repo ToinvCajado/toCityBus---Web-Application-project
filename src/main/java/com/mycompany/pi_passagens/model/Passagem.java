@@ -48,4 +48,70 @@ public class Passagem {
 
     @Column(name = "valor_passagem", precision = 10, scale = 2)
     private BigDecimal valorPassagem;
+
+    public Integer getIdPassagem() {
+        return idPassagem;
+    }
+
+    public void setIdPassagem(Integer idPassagem) {
+        this.idPassagem = idPassagem;
+    }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+
+    public Integer getPoltrona() {
+        return poltrona;
+    }
+
+    public void setPoltrona(Integer poltrona) {
+        this.poltrona = poltrona;
+    }
+
+    public Date getDataSaida() {
+        return dataSaida;
+    }
+
+    public void setDataSaida(Date dataSaida) {
+        this.dataSaida = dataSaida;
+    }
+
+    public String getHoraSaida() {
+        return horaSaida;
+    }
+
+    public void setHoraSaida(String horaSaida) {
+        this.horaSaida = horaSaida;
+    }
+
+    public Cidade getCidadeOrigem() {
+        return cidadeOrigem;
+    }
+
+    public void setCidadeOrigem(Cidade cidadeOrigem) {
+        this.cidadeOrigem = cidadeOrigem;
+    }
+
+    public Cidade getCidadeDestino() {
+        return cidadeDestino;
+    }
+
+    public void setCidadeDestino(Cidade cidadeDestino) {
+        this.cidadeDestino = cidadeDestino;
+    }
+
+    public BigDecimal getValorPassagem() {
+        return valorPassagem;
+    }
+
+    public void setValorPassagem(BigDecimal valorPassagem) {
+        this.valorPassagem = valorPassagem;
+    }
+    
+    
 }

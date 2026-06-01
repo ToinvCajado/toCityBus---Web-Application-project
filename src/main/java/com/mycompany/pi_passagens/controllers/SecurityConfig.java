@@ -42,7 +42,6 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable( ))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/jakarta.faces.resource/**")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/login.xhtml")).permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/usuario/cadastro.xhtml")).permitAll()

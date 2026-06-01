@@ -9,7 +9,7 @@
 
     <ui:define name="conteudo">
         <p:messages showDetail="false"/>
-        <h:form>
+        <h:form id="formVeic">
             <div class="page-header">
                 <h1 class="page-title">Veículos</h1>
                 <p:commandButton value="+ Novo Veículo"
@@ -111,7 +111,7 @@
                     <p:commandButton value="Salvar"
                         styleClass="btn btn-sucesso"
                         action="#{veiculoBean.salvar}"
-                        update=":formVeiculo @(.card)"
+                        update=":formVeic @(.card)"
                         oncomplete="if(!args.validationFailed) PF('dlgVeiculo').hide()"/>
                     <p:commandButton value="Cancelar"
                         styleClass="btn btn-cinza"

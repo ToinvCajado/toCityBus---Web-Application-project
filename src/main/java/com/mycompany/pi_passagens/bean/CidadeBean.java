@@ -19,7 +19,7 @@ public class CidadeBean implements Serializable {
     @Autowired 
     private CidadeService service;
 
-    private Cidade cidadeSelecionada = new Cidade();
+    private Cidade cidadeSelecionada;
     private List<Cidade> cidades;
     private String termoBusca;
 
@@ -34,6 +34,7 @@ public class CidadeBean implements Serializable {
         }
         
         listar();
+        cidadeSelecionada  = new Cidade();
     }
 
     public void novaCidade() {

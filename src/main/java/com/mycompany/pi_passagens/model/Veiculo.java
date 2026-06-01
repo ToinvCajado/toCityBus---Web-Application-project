@@ -38,4 +38,62 @@ public class Veiculo {
     @Min(1)
     @Column(name = "qtd_poltronas", nullable = false)
     private Integer qtdPoltronas;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public String getMotorista() {
+        return motorista;
+    }
+
+    public void setMotorista(String motorista) {
+        this.motorista = motorista;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public Date getDataCompra() {
+        return dataCompra;
+    }
+
+    public void setDataCompra(Date dataCompra) {
+        this.dataCompra = dataCompra;
+    }
+
+    public Integer getQtdPoltronas() {
+        return qtdPoltronas;
+    }
+
+    public void setQtdPoltronas(Integer qtdPoltronas) {
+        this.qtdPoltronas = qtdPoltronas;
+    }
+    
+    
 }
