@@ -4,12 +4,15 @@ import com.mycompany.pi_passagens.model.*;
 import com.mycompany.pi_passagens.services.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
+import static jakarta.faces.application.FacesMessage.SEVERITY_ERROR;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -77,7 +80,7 @@ public class PassagemBean implements Serializable {
             this.passagemSelecionada = new Passagem();
             listar();
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", e.getMessage()));
         }
     }
 
@@ -85,7 +88,55 @@ public class PassagemBean implements Serializable {
         if (service != null) this.passagens = service.listarTodas();
     }
 
-    // Getters e Setters Completos
+    public void excluir(Passagem p) {
+        try {
+            service.excluir(p.getIdPassagem());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso", "Passagem excluída com sucesso!"));
+            listar();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", "Não foi possível excluir: " + e.getMessage()));
+        }
+    }
+
+    public void calcularFaturamento() {
+        if (inicioFaturamento == null || fimFaturamento == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", "Informe o período."));
+            return;
+        }
+        if (fimFaturamento.isBefore(inicioFaturamento)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", "Data fim antes da data início."));
+            return;
+        }
+
+        Date inicio = localDateToDate(inicioFaturamento);
+        Date fim = Date.from(fimFaturamento.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+
+        this.totalFaturamento = service.consultarFaturamento(inicio, fim);
+        this.passagensFaturamento = service.listarPorPeriodo(inicio, fim);
+    }
+
+    public void consultarRoteiro() {
+        if (idOrigemRoteiro == null || idOrigemRoteiro.isBlank() || idDestinoRoteiro == null || idDestinoRoteiro.isBlank()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", "Informe origem e destino."));
+            return;
+        }
+        if (idOrigemRoteiro.equals(idDestinoRoteiro)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", "Origem e destino iguais."));
+            return;
+        }
+
+        if (dataRoteiro != null) {
+            this.passagensRoteiro = service.listarPorRoteiroEData(idOrigemRoteiro, idDestinoRoteiro, localDateToDate(dataRoteiro));
+        } else {
+            this.passagensRoteiro = service.listarPassagensPorRoteiro(idOrigemRoteiro, idDestinoRoteiro);
+        }
+    }
+
+    private Date localDateToDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    // Getters e Setters
     public Passagem getPassagemSelecionada() { return passagemSelecionada; }
     public void setPassagemSelecionada(Passagem passagemSelecionada) { this.passagemSelecionada = passagemSelecionada; }
     public Long getIdVeiculoSelecionado() { return idVeiculoSelecionado; }

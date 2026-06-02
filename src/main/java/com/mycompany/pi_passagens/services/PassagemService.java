@@ -33,11 +33,26 @@ public class PassagemService {
             throw new Exception("Esta poltrona já foi vendida para esta viagem!");
         }
 
+        long conflito = repository.contarVeiculoEmOutroRoteiro(
+            passagem.getVeiculo().getId(),
+            passagem.getDataSaida(),
+            passagem.getHoraSaida(),
+            passagem.getCidadeOrigem().getIdCidade(),
+            passagem.getCidadeDestino().getIdCidade()
+        );
+        if (conflito > 0) {
+            throw new Exception("Este veículo já está alocado em outro roteiro no mesmo horário!");
+        }
+
         return repository.save(passagem);
     }
 
     public List<Passagem> listarPassagensPorRoteiro(String origem, String destino) {
         return repository.findByRoteiro(origem, destino);
+    }
+
+    public List<Passagem> listarPorRoteiroEData(String origem, String destino, Date data) {
+        return repository.findByRoteiroEData(origem, destino, data);
     }
 
     public BigDecimal consultarFaturamento(Date inicio, Date fim) {
