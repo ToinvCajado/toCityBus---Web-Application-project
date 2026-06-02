@@ -39,7 +39,7 @@
                              value="#{cidadeBean.cidades}"
                              var="cidade"
                              emptyMessage="Nenhuma cidade cadastrada.">
-                    <p:column headerText="Sigla IBGE">
+                    <p:column headerText="Código IBGE">
                         <h:outputText value="#{cidade.idCidade}"/>
                     </p:column>
                     <p:column headerText="Nome">
@@ -74,7 +74,7 @@
                         <p:inputText
                             value="#{cidadeBean.cidadeSelecionada.idCidade}"
                             styleClass="form-control"
-                            placeholder="Ex: SSA"
+                            placeholder=""
                             maxlength="10" required="true"
                             requiredMessage="Sigla obrigatória"/>
                     </div>
