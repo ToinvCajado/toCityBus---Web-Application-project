@@ -5,6 +5,9 @@ import com.mycompany.pi_passagens.repository.PassagemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -19,10 +22,30 @@ public class PassagemService {
     }
 
     public Passagem venderPassagem(Passagem passagem) throws Exception {
-        if (passagem.getPoltrona() > passagem.getVeiculo().getQtdPoltronas()) {
-            throw new Exception("O número da poltrona excede a capacidade do veículo!");
+
+        // 1. Origem e destino não podem ser iguais
+        if (passagem.getCidadeOrigem().getIdCidade()
+                .equals(passagem.getCidadeDestino().getIdCidade())) {
+            throw new Exception("Origem e destino não podem ser iguais para a mesma passagem!");
         }
 
+        // 2. Não permitir venda para datas passadas
+        LocalDate hoje = LocalDate.now();
+        LocalDate dataSaida = passagem.getDataSaida().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate();
+        if (dataSaida.isBefore(hoje)) {
+            throw new Exception("Não é possível vender passagem para data anterior a hoje ("
+                    + hoje.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ")!");
+        }
+
+        // 3. Número de poltrona não pode exceder a capacidade do veículo
+        if (passagem.getPoltrona() > passagem.getVeiculo().getQtdPoltronas()) {
+            throw new Exception("Poltrona " + passagem.getPoltrona()
+                    + " inválida: o veículo possui apenas "
+                    + passagem.getVeiculo().getQtdPoltronas() + " poltronas!");
+        }
+
+        // 4. Poltrona já vendida para este veículo/data/hora
         boolean jaVendida = repository.existsByVeiculoIdAndDataSaidaAndHoraSaidaAndPoltrona(
             passagem.getVeiculo().getId(),
             passagem.getDataSaida(),
@@ -30,9 +53,13 @@ public class PassagemService {
             passagem.getPoltrona()
         );
         if (jaVendida) {
-            throw new Exception("Esta poltrona já foi vendida para esta viagem!");
+            throw new Exception("Poltrona " + passagem.getPoltrona()
+                    + " já vendida para este veículo na data "
+                    + dataSaida.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + " às " + passagem.getHoraSaida() + "!");
         }
 
+        // 5. Veículo já alocado em outro roteiro no mesmo horário
         long conflito = repository.contarVeiculoEmOutroRoteiro(
             passagem.getVeiculo().getId(),
             passagem.getDataSaida(),
@@ -41,7 +68,10 @@ public class PassagemService {
             passagem.getCidadeDestino().getIdCidade()
         );
         if (conflito > 0) {
-            throw new Exception("Este veículo já está alocado em outro roteiro no mesmo horário!");
+            throw new Exception("O veículo " + passagem.getVeiculo().getPlaca()
+                    + " já está alocado em outro roteiro em "
+                    + dataSaida.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    + " às " + passagem.getHoraSaida() + "!");
         }
 
         return repository.save(passagem);

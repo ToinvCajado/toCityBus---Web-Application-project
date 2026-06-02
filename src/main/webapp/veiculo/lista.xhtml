@@ -3,20 +3,22 @@
       xmlns:h="jakarta.faces.html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:ui="jakarta.faces.facelets">
+
 <ui:composition template="/template/layout.xhtml">
 
     <ui:define name="titulo">Veículos - ToCityBus</ui:define>
 
     <ui:define name="conteudo">
-        <p:messages showDetail="false"/>
+        <p:messages id="msgsOuter" showDetail="true" closable="true" />
+
         <h:form id="formVeic">
             <div class="page-header">
                 <h1 class="page-title">Veículos</h1>
                 <p:commandButton value="+ Novo Veículo"
-                    styleClass="btn btn-primary"
-                    action="#{veiculoBean.novoVeiculo}"
-                    update=":formVeiculo"
-                    oncomplete="PF('dlgVeiculo').show()"/>
+                                 styleClass="btn btn-primary"
+                                 action="#{veiculoBean.novoVeiculo}"
+                                 update=":formVeiculo"
+                                 oncomplete="PF('dlgVeiculo').show()" />
             </div>
 
             <div class="card">
@@ -24,102 +26,99 @@
                              var="v"
                              emptyMessage="Nenhum veículo cadastrado.">
                     <p:column headerText="Número">
-                        <h:outputText value="#{v.numero}"/>
+                        <h:outputText value="#{v.numero}" />
                     </p:column>
                     <p:column headerText="Placa">
-                        <h:outputText value="#{v.placa}"/>
+                        <h:outputText value="#{v.placa}" />
                     </p:column>
                     <p:column headerText="Modelo">
-                        <h:outputText value="#{v.modelo}"/>
+                        <h:outputText value="#{v.modelo}" />
                     </p:column>
                     <p:column headerText="Motorista">
-                        <h:outputText value="#{v.motorista}"/>
+                        <h:outputText value="#{v.motorista}" />
                     </p:column>
                     <p:column headerText="Poltronas">
-                        <h:outputText value="#{v.qtdPoltronas}"/>
+                        <h:outputText value="#{v.qtdPoltronas}" />
                     </p:column>
                     <p:column headerText="Ações">
                         <p:commandButton value="Editar"
-                            styleClass="btn btn-cinza btn-sm"
-                            action="#{veiculoBean.prepararEdicao(v)}"
-                            update=":formVeiculo"
-                            oncomplete="PF('dlgVeiculo').show()"/>
+                                         styleClass="btn btn-cinza btn-sm"
+                                         action="#{veiculoBean.prepararEdicao(v)}"
+                                         update=":formVeiculo"
+                                         oncomplete="PF('dlgVeiculo').show()" />
+                        
+                        <p:spacer width="5" />
+                        
                         <p:commandButton value="Excluir"
-                            styleClass="btn btn-perigo btn-sm"
-                            action="#{veiculoBean.excluir(v)}"
-                            update="@form"
-                            onclick="return confirm('Excluir este veículo?')"/>
+                                         styleClass="btn btn-perigo btn-sm"
+                                         action="#{veiculoBean.excluir(v)}"
+                                         update="@form :msgsOuter"
+                                         onclick="return confirm('Excluir o veículo #{v.placa}?')">
+                        </p:commandButton>
                     </p:column>
                 </p:dataTable>
             </div>
         </h:form>
 
-        <p:dialog header="Veículo" widgetVar="dlgVeiculo"
-                  modal="true" width="600">
+        <p:dialog header="Veículo" widgetVar="dlgVeiculo" modal="true" width="600" responsive="true">
             <h:form id="formVeiculo">
-                <p:messages showDetail="true"/>
+                <p:messages id="msgsDlg" showDetail="true" closable="true" />
+                
                 <div class="form-linha">
                     <div class="form-group">
                         <label class="form-label">Número *</label>
-                        <p:inputText
-                            value="#{veiculoBean.veiculoSelecionado.numero}"
-                            styleClass="form-control"
-                            placeholder="Ex: BUS-001"
-                            required="true"/>
+                        <p:inputText value="#{veiculoBean.veiculoSelecionado.numero}"
+                                     styleClass="form-control"
+                                     required="true"
+                                     requiredMessage="Número é obrigatório" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Placa *</label>
-                        <p:inputText
-                            value="#{veiculoBean.veiculoSelecionado.placa}"
-                            styleClass="form-control"
-                            placeholder="Ex: ABC1D23"
-                            required="true"/>
+                        <p:inputText value="#{veiculoBean.veiculoSelecionado.placa}"
+                                     styleClass="form-control"
+                                     required="true"
+                                     requiredMessage="Placa é obrigatória" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Modelo *</label>
-                        <p:inputText
-                            value="#{veiculoBean.veiculoSelecionado.modelo}"
-                            styleClass="form-control"
-                            required="true"/>
+                        <p:inputText value="#{veiculoBean.veiculoSelecionado.modelo}"
+                                     styleClass="form-control"
+                                     required="true"
+                                     requiredMessage="Modelo é obrigatório" />
                     </div>
                 </div>
+
                 <div class="form-linha">
                     <div class="form-group">
                         <label class="form-label">Motorista *</label>
-                        <p:inputText
-                            value="#{veiculoBean.veiculoSelecionado.motorista}"
-                            styleClass="form-control"
-                            required="true"/>
+                        <p:inputText value="#{veiculoBean.veiculoSelecionado.motorista}"
+                                     styleClass="form-control"
+                                     required="true"
+                                     requiredMessage="Motorista é obrigatório" />
                     </div>
                     <div class="form-group">
                         <label class="form-label">Poltronas *</label>
-                        <p:inputNumber
-                            value="#{veiculoBean.veiculoSelecionado.qtdPoltronas}"
-                            styleClass="form-control"
-                            minValue="1" maxValue="200"
-                            required="true"/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Data Compra</label>
-                        <p:datePicker
-                            value="#{veiculoBean.veiculoSelecionado.dataCompra}"
-                            styleClass="form-control"
-                            pattern="dd/MM/yyyy"/>
+                        <p:inputNumber value="#{veiculoBean.veiculoSelecionado.qtdPoltronas}"
+                                       styleClass="form-control"
+                                       minValue="1" maxValue="200"
+                                       required="true"
+                                       requiredMessage="Quantidade de poltronas é obrigatória" />
                     </div>
                 </div>
+
                 <div class="form-acoes">
                     <p:commandButton value="Salvar"
-                        styleClass="btn btn-sucesso"
-                        action="#{veiculoBean.salvar}"
-                        update=":formVeic @(.card)"
-                        oncomplete="if(!args.validationFailed) PF('dlgVeiculo').hide()"/>
+                                     styleClass="btn btn-sucesso"
+                                     action="#{veiculoBean.salvar}"
+                                     update="msgsDlg :formVeic"
+                                     oncomplete="if(args &amp;&amp; args.saved) PF('dlgVeiculo').hide()" />
+                    
                     <p:commandButton value="Cancelar"
-                        styleClass="btn btn-cinza"
-                        onclick="PF('dlgVeiculo').hide(); return false;"/>
+                                     styleClass="btn btn-cinza"
+                                     onclick="PF('dlgVeiculo').hide(); return false;" />
                 </div>
             </h:form>
         </p:dialog>
-
     </ui:define>
 </ui:composition>
 </html>

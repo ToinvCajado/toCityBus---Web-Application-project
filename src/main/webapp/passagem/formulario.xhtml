@@ -15,9 +15,11 @@
         <div class="alert alert-info">
             ⚠️ A passagem é gerada no momento da compra.
         </div>
-        <p:messages showDetail="true"/>
 
         <h:form>
+            <!-- Mensagens DENTRO do form para funcionar corretamente -->
+            <p:messages id="msgs" showDetail="true"/>
+
             <div class="card">
                 <div class="card-body">
 
@@ -46,7 +48,7 @@
                                 styleClass="form-control"
                                 minValue="1"
                                 required="true"
-                                requiredMessage="Poltrona obrigatória"/>
+                                requiredMessage="Número da poltrona é obrigatório"/>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Data Saída *</label>
@@ -54,8 +56,9 @@
                                 value="#{passagemBean.passagemSelecionada.dataSaida}"
                                 styleClass="form-control"
                                 pattern="dd/MM/yyyy"
+                                mindate="#{passagemBean.hoje}"
                                 required="true"
-                                requiredMessage="Data obrigatória"/>
+                                requiredMessage="Data de saída é obrigatória"/>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Hora *</label>
@@ -65,7 +68,7 @@
                                 styleClass="form-control"
                                 placeholder="Ex: 08:30"
                                 required="true"
-                                requiredMessage="Hora obrigatória"/>
+                                requiredMessage="Hora de saída é obrigatória"/>
                         </div>
                     </div>
 
@@ -76,7 +79,7 @@
                                 value="#{passagemBean.idOrigemSelecionada}"
                                 styleClass="form-control"
                                 required="true"
-                                requiredMessage="Selecione a origem">
+                                requiredMessage="Selecione a cidade de origem">
                                 <f:selectItem itemLabel="-- Origem --"
                                              itemValue="#{null}"/>
                                 <f:selectItems
@@ -92,7 +95,7 @@
                                 value="#{passagemBean.idDestinoSelecionada}"
                                 styleClass="form-control"
                                 required="true"
-                                requiredMessage="Selecione o destino">
+                                requiredMessage="Selecione a cidade de destino">
                                 <f:selectItem itemLabel="-- Destino --"
                                              itemValue="#{null}"/>
                                 <f:selectItems
@@ -111,15 +114,16 @@
                                 decimalSeparator=","
                                 thousandSeparator="."
                                 required="true"
-                                requiredMessage="Valor obrigatório"/>
+                                requiredMessage="Valor da passagem é obrigatório"/>
                         </div>
                     </div>
 
                     <div class="form-acoes">
+                        <!-- ajax="false" para permitir navegação após sucesso -->
                         <p:commandButton value="Confirmar Venda"
                             styleClass="btn btn-sucesso"
                             action="#{passagemBean.vender}"
-                            update="@form"/>
+                            ajax="false"/>
                         <h:link outcome="/passagem/lista"
                                 styleClass="btn btn-cinza">
                             Cancelar

@@ -9,8 +9,10 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils; // IMPORTANTE
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Named("veiculoBean")
 @ViewScoped
@@ -24,15 +26,13 @@ public class VeiculoBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // Resgate manual caso o container do JSF não injete o Spring automaticamente
         if (this.service == null) {
             var servletContext = (jakarta.servlet.ServletContext) FacesContext.getCurrentInstance()
                     .getExternalContext().getContext();
             var springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
             this.service = springContext.getBean(VeiculoService.class);
         }
-        
-        listar(); 
+        listar();
     }
 
     public void novoVeiculo() {
@@ -50,9 +50,16 @@ public class VeiculoBean implements Serializable {
                 new FacesMessage("Sucesso", "Veículo salvo com sucesso!"));
             veiculoSelecionado = new Veiculo();
             listar();
+            PrimeFaces.current().ajax().addCallbackParam("saved", true);
+        } catch (DataIntegrityViolationException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar",
+                    "Já existe um veículo cadastrado com esta placa ou número. Verifique os dados."));
+            PrimeFaces.current().ajax().addCallbackParam("saved", false);
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
+            PrimeFaces.current().ajax().addCallbackParam("saved", false);
         }
     }
 
@@ -60,12 +67,12 @@ public class VeiculoBean implements Serializable {
         try {
             service.excluir(v.getId());
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Sucesso", "Veículo removido."));
+                new FacesMessage("Sucesso", "Veículo \"" + v.getPlaca() + "\" removido com sucesso."));
             listar();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro",
-                    "Não foi possível excluir: veículo pode ter passagens vinculadas."));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Não foi possível excluir",
+                    "O veículo \"" + v.getPlaca() + "\" possui passagens vinculadas e não pode ser removido."));
         }
     }
 

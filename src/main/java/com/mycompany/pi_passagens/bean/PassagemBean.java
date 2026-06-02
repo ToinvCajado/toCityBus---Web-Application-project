@@ -64,8 +64,12 @@ public class PassagemBean implements Serializable {
             System.err.println("Erro no init: " + e.getMessage());
         }
     }
+    
+public Date getHoje() {
+    return new Date();
+}
 
-    public void vender() {
+    public String vender() {
         try {
             Veiculo v = veiculoService.buscarPorId(idVeiculoSelecionado);
             Cidade origem = cidadeService.buscarPorId(idOrigemSelecionada);
@@ -76,11 +80,20 @@ public class PassagemBean implements Serializable {
             passagemSelecionada.setCidadeDestino(destino);
 
             service.venderPassagem(passagemSelecionada);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Sucesso!", "Venda realizada."));
+
+            // Mensagem flash para exibir na tela de lista após redirecionamento
+            FacesContext ctx = FacesContext.getCurrentInstance();
+            ctx.getExternalContext().getFlash().setKeepMessages(true);
+            ctx.addMessage(null, new FacesMessage("Venda realizada com sucesso!",
+                    "Passagem registrada para "
+                    + origem.getNomeCidade() + " → " + destino.getNomeCidade() + "."));
+
             this.passagemSelecionada = new Passagem();
-            listar();
+            return "/passagem/lista?faces-redirect=true";
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(SEVERITY_ERROR, "Erro", e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(SEVERITY_ERROR, "Não foi possível realizar a venda", e.getMessage()));
+            return null;
         }
     }
 

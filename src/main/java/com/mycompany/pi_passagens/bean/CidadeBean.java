@@ -9,8 +9,10 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils; // IMPORTANTE
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 @Named("cidadeBean")
 @ViewScoped
@@ -25,16 +27,14 @@ public class CidadeBean implements Serializable {
 
     @PostConstruct
     public void init() {
-        // Resgate manual caso o container do JSF não injete o Spring automaticamente
         if (this.service == null) {
             var servletContext = (jakarta.servlet.ServletContext) FacesContext.getCurrentInstance()
                     .getExternalContext().getContext();
             var springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
             this.service = springContext.getBean(CidadeService.class);
         }
-        
         listar();
-        cidadeSelecionada  = new Cidade();
+        cidadeSelecionada = new Cidade();
     }
 
     public void novaCidade() {
@@ -52,9 +52,16 @@ public class CidadeBean implements Serializable {
                 new FacesMessage("Sucesso", "Cidade salva com sucesso!"));
             cidadeSelecionada = new Cidade();
             listar();
+            PrimeFaces.current().ajax().addCallbackParam("saved", true);
+        } catch (DataIntegrityViolationException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar",
+                    "Já existe uma cidade cadastrada com este código IBGE. Verifique os dados."));
+            PrimeFaces.current().ajax().addCallbackParam("saved", false);
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", e.getMessage()));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao salvar", e.getMessage()));
+            PrimeFaces.current().ajax().addCallbackParam("saved", false);
         }
     }
 
@@ -62,12 +69,12 @@ public class CidadeBean implements Serializable {
         try {
             service.excluir(cidade.getIdCidade());
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage("Sucesso", "Cidade removida."));
+                new FacesMessage("Sucesso", "Cidade \"" + cidade.getNomeCidade() + "\" removida com sucesso."));
             listar();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro",
-                    "Não foi possível excluir: cidade pode estar vinculada a passagens."));
+                new FacesMessage(FacesMessage.SEVERITY_ERROR, "Não foi possível excluir",
+                    "A cidade \"" + cidade.getNomeCidade() + "\" está vinculada a passagens existentes e não pode ser removida."));
         }
     }
 
